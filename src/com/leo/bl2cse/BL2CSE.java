@@ -149,12 +149,12 @@ public class BL2CSE {
 			for (int i = 0; i < info.size(); i++) {
 				EntityInfo e = info.get(i);
 				Rectangle r = e.getRect();
-				if (r.x < r.width) {
+				if (r.x > r.width) {
 					int tmp = r.x;
 					r.x = r.width;
 					r.width = tmp;
 				}
-				if (r.y < r.height) {
+				if (r.y > r.height) {
 					int tmp = r.y;
 					r.y = r.height;
 					r.height = tmp;
