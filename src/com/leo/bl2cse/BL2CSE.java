@@ -149,30 +149,19 @@ public class BL2CSE {
 			for (int i = 0; i < info.size(); i++) {
 				EntityInfo e = info.get(i);
 				Rectangle r = e.getRect();
-				if (r.x > r.width) {
-					int tmp = r.x;
-					r.x = r.width;
-					r.width = tmp;
-				}
-				if (r.y > r.height) {
-					int tmp = r.y;
-					r.y = r.height;
-					r.height = tmp;
-				}
 				String sn = e.getShortName1().trim();
 				String sn2 = e.getShortName2().trim();
 				if (!sn2.isEmpty())
 					sn += " " + e.getShortName2().trim();
 				bw.write(
 						"\n\tcase " + i + ": // " + e.getName().trim() + " (" + sn + ")\n\t\treturn java.awt.Rectangle("
-								+ r.x + ", " + r.y + ", " + (r.width - r.x) + ", " + (r.height - r.y) + ");");
+								+ r.x + ", " + r.y + ", " + r.width + ", " + r.height + ");");
 			}
-			bw.write("\n\tdefault:\n\t\treturn java.awt.Rectangle(0, 0, 0, 0);\n}");
+			bw.write("\n\tdefault:\n\t\treturn java.awt.Rectangle(0, 0, 0, 0);\n\t}\n}");
 		} catch (IOException e) {
 			error(e, "Error writing output");
 		}
-		JOptionPane.showMessageDialog(null,
-				"Generated output.js in app directory (" + System.getProperty("user.dir") + ")", "Done!",
+		JOptionPane.showMessageDialog(null, "Generated output.js: \n" + System.getProperty("user.dir"), "Done!",
 				JOptionPane.INFORMATION_MESSAGE);
 		System.exit(0);
 	}
