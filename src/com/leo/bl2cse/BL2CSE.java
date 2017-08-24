@@ -149,6 +149,16 @@ public class BL2CSE {
 			for (int i = 0; i < info.size(); i++) {
 				EntityInfo e = info.get(i);
 				Rectangle r = e.getRect();
+				if (r.x < r.width) {
+					int tmp = r.x;
+					r.x = r.width;
+					r.width = tmp;
+				}
+				if (r.y < r.height) {
+					int tmp = r.y;
+					r.y = r.height;
+					r.height = tmp;
+				}
 				String sn = e.getShortName1().trim();
 				String sn2 = e.getShortName2().trim();
 				if (!sn2.isEmpty())
