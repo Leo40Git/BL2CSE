@@ -145,7 +145,7 @@ public class BL2CSE {
 			error(e1, "Error creating output.js");
 		}
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(out))) {
-			bw.write("function getEntityFrame(entity) {\n\tswitch (entity.type) {");
+			bw.write("function getEntityFrame(entity) {\n    switch (entity.type) {");
 			for (int i = 0; i < info.size(); i++) {
 				EntityInfo e = info.get(i);
 				Rectangle r = e.getRect();
@@ -154,7 +154,7 @@ public class BL2CSE {
 				if (!sn2.isEmpty())
 					sn += " " + e.getShortName2().trim();
 				bw.write(
-						"\n\tcase " + i + ": // " + e.getName().trim() + " (" + sn + ")\n\t\treturn java.awt.Rectangle("
+						"\n    case " + i + ": // " + e.getName().trim() + " (" + sn + ")\n\treturn java.awt.Rectangle("
 								+ r.x + ", " + r.y + ", " + r.width + ", " + r.height + ");");
 			}
 			bw.write("\n\tdefault:\n\t\treturn java.awt.Rectangle(0, 0, 0, 0);\n\t}\n}");
