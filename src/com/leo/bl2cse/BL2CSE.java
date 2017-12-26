@@ -18,6 +18,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class BL2CSE {
 
+	public static final Rectangle RECT_NULL = new Rectangle(0, 0, 0, 0);
+
 	private static JFileChooser fc;
 
 	public static int openFileChooser(Component parent, String title, FileFilter filter, File currentDirectory,
@@ -98,12 +100,15 @@ public class BL2CSE {
 	}
 
 	public static void main(String[] args) {
-		int openRes = openFileChooser(null, "Open entityInfo.txt", new FileNameExtensionFilter("Text file", "txt"),
-				new File(System.getProperty("user.dir")), false, false);
-		if (openRes != JFileChooser.APPROVE_OPTION)
-			System.exit(0);
 		info = new LinkedList<>();
-		File entityInfo = fc.getSelectedFile();
+		File entityInfo = new File(System.getProperty("user.dir") + "/entityInfo.txt");
+		if (!entityInfo.exists()) {
+			int openRes = openFileChooser(null, "Open entityInfo.txt", new FileNameExtensionFilter("Text file", "txt"),
+					new File(System.getProperty("user.dir")), false, false);
+			if (openRes != JFileChooser.APPROVE_OPTION)
+				System.exit(0);
+			entityInfo = fc.getSelectedFile();
+		}
 		Scanner sc = null;
 		try {
 			sc = new Scanner(entityInfo);
@@ -113,15 +118,15 @@ public class BL2CSE {
 		}
 		while (sc.hasNextLine()) {
 			String line = sc.nextLine();
-			if (line.equals("") || line.startsWith("/")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (line.equals("") || line.startsWith("/"))
 				continue;
-			if (line.startsWith("#")) { //$NON-NLS-1$
+			if (line.startsWith("#")) {
 				try {
 					// entity number entry
 					line = line.substring(1); // throw away the marker
 					line = line.substring(0, line.indexOf(';')); // throw away the trailing garbage
 					Scanner lineScan = new Scanner(line);
-					lineScan.useDelimiter("\\t+"); //$NON-NLS-1$
+					lineScan.useDelimiter("\\t+");
 					EntityInfo i = new EntityInfo();
 					lineScan.nextInt(); // entity number
 					i.setShortName1(lineScan.next()); // short name 1
@@ -149,19 +154,21 @@ public class BL2CSE {
 			for (int i = 0; i < info.size(); i++) {
 				EntityInfo e = info.get(i);
 				Rectangle r = e.getRect();
+				if (r.equals(RECT_NULL))
+					continue;
 				String sn = e.getShortName1().trim();
 				String sn2 = e.getShortName2().trim();
 				if (!sn2.isEmpty())
 					sn += " " + e.getShortName2().trim();
-				bw.write(
-						"\n    case " + i + ": // " + e.getName().trim() + " (" + sn + ")\n\treturn java.awt.Rectangle("
-								+ r.x + ", " + r.y + ", " + r.width + ", " + r.height + ");");
+				bw.write("\n    case " + i + ": // " + e.getName().trim() + " (" + sn
+						+ ")\n        return java.awt.Rectangle(" + r.x + ", " + r.y + ", " + r.width + ", " + r.height
+						+ ");");
 			}
-			bw.write("\n\tdefault:\n\t\treturn java.awt.Rectangle(0, 0, 0, 0);\n\t}\n}");
+			bw.write("\n    default:\n        return java.awt.Rectangle(0, 0, 0, 0);\n    }\n}");
 		} catch (IOException e) {
 			error(e, "Error writing output");
 		}
-		JOptionPane.showMessageDialog(null, "Generated output.js: \n" + System.getProperty("user.dir"), "Done!",
+		JOptionPane.showMessageDialog(null, "Generated output.js in:\n" + System.getProperty("user.dir"), "Done!",
 				JOptionPane.INFORMATION_MESSAGE);
 		System.exit(0);
 	}
